@@ -14,7 +14,7 @@ namespace ProcessSocket
         {
         }
 
-        public static void StartClient() {
+        public void StartClient() {
             // Data buffer for incoming data.
             byte[] bytes = new byte[1024];
 
@@ -27,7 +27,7 @@ namespace ProcessSocket
                 IPEndPoint remoteEP = new IPEndPoint(ipAddress,11000);
 
                 // Create a TCP/IP  socket.
-                Socket sender = new Socket((AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
+                Socket sender = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
 
                 // Connect the socket to the remote endpoint. Catch any errors.
                 try {

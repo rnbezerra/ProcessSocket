@@ -16,16 +16,18 @@ namespace ProcessSocket
             Thread threadServer = new Thread(new ThreadStart(() =>
             {
                 Server server = new Server();
+                server.StartListening();
             }));
             
             Thread threadClient = new Thread(new ThreadStart(() =>
             {
                 Client client = new Client();
+                client.StartClient();
             }));
 
             threadServer.Start();
             threadClient.Start();
-            
+
         }
     }
 }
