@@ -1,7 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessSocket", "ProcessSocket\ProcessSocket.csproj", "{31A88E2B-AA17-454A-9A8D-AA61B4615103}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "ProcessSocket\Server.csproj", "{31A88E2B-AA17-454A-9A8D-AA61B4615103}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{0F3BC7AB-4AAB-425E-89BF-45EDA98E7D21}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,6 +15,10 @@ Global
 		{31A88E2B-AA17-454A-9A8D-AA61B4615103}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31A88E2B-AA17-454A-9A8D-AA61B4615103}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31A88E2B-AA17-454A-9A8D-AA61B4615103}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F3BC7AB-4AAB-425E-89BF-45EDA98E7D21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F3BC7AB-4AAB-425E-89BF-45EDA98E7D21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F3BC7AB-4AAB-425E-89BF-45EDA98E7D21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F3BC7AB-4AAB-425E-89BF-45EDA98E7D21}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

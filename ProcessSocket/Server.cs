@@ -22,8 +22,8 @@ namespace ProcessSocket
         {
 
         }
-
-        //public Server()
+        
+        //public void ExecuteCMDCommand(String command)
         //{
         //    Process p = new Process();
         //    ProcessStartInfo process = new ProcessStartInfo("cmd.exe");
@@ -69,6 +69,60 @@ namespace ProcessSocket
         //    }
         //}
 
+        public string ExecuteCMDCommand(String command)
+        {
+            Process p = new Process();
+            ProcessStartInfo process = new ProcessStartInfo("cmd.exe");
+            process.CreateNoWindow = true;
+            process.UseShellExecute = false;
+            process.RedirectStandardInput = true;
+            process.RedirectStandardOutput = true;
+            process.RedirectStandardError = true;
+
+            p.StartInfo = process;
+
+            p.Start();
+
+            StreamReader reader = p.StandardOutput;
+            StreamWriter writer = p.StandardInput;
+            StreamReader readerError = p.StandardError;
+            
+            //CAPTURA OUTPUT DO CONSOLE
+            StringBuilder consoleOutput = new StringBuilder();
+            Thread thrRead = new Thread(new ThreadStart(() =>
+            {
+                char[] buffer = new char[1024];
+                int totalRead = 0;
+                while (true)
+                {
+                    totalRead = reader.Read(buffer, 0, buffer.Length);
+
+                    string msg = new string(buffer, 0, totalRead);
+
+                    //Console.Write(msg);
+                    consoleOutput.Append(msg);
+                    if (reader.EndOfStream) break;
+
+                    Thread.Sleep(100);
+                }
+            }));
+
+            thrRead.Start();
+
+            //EXECUTA COMANDO
+            writer.Write(command + "\n");
+            writer.Flush();
+
+            thrRead.Join();
+
+            writer.Close();
+            reader.Close();
+            readerError.Close();
+            p.Close();
+
+            return consoleOutput.ToString();
+        }
+        
         public void StartListening()
         {
             // Data buffer for incoming data.
@@ -93,35 +147,35 @@ namespace ProcessSocket
                 listener.Listen(10);
 
                 // Start listening for connections.
+                Console.WriteLine("Waiting for a connection...");
+                // Program is suspended while waiting for an incoming connection.
+                Socket handler = listener.Accept();
+
+                data = null;
+
+                // An incoming connection needs to be processed.
                 while (true)
                 {
-                    Console.WriteLine("Waiting for a connection...");
-                    // Program is suspended while waiting for an incoming connection.
-                    Socket handler = listener.Accept();
-                    data = null;
-
-                    // An incoming connection needs to be processed.
-                    while (true)
+                    bytes = new byte[1024];
+                    int bytesRec = handler.Receive(bytes);
+                    data += Encoding.UTF8.GetString(bytes, 0, bytesRec);
+                    if (data.ToLower().IndexOf("<eol>") > -1)
                     {
-                        bytes = new byte[1024];
-                        int bytesRec = handler.Receive(bytes);
-                        data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
-                        if (data.IndexOf("<EOF>") > -1)
-                        {
-                            break;
-                        }
+                        data = data.Replace("<eol>", "");
+                        break;
                     }
-
-                    // Show the data on the console.
-                    Console.WriteLine("Text received : {0}", data);
-
-                    // Echo the data back to the client.
-                    byte[] msg = Encoding.ASCII.GetBytes(data);
-
-                    handler.Send(msg);
-                    handler.Shutdown(SocketShutdown.Both);
-                    handler.Close();
                 }
+
+                // Show the data on the console.
+                Console.WriteLine("Text received : {0}", data);
+
+                // Echo the data back to the client.
+                byte[] msg = Encoding.ASCII.GetBytes(data);
+
+                handler.Send(msg);
+                handler.Shutdown(SocketShutdown.Both);
+                handler.Close();
+                
 
             }
             catch (Exception e)
