@@ -35,28 +35,34 @@ namespace Client
 
                     Console.WriteLine("Socket connected to {0}", sender.RemoteEndPoint.ToString());
                     Console.WriteLine();
-
-                    Console.Write("Digite um comando para iniciar: ");
-                    while (true)
+                    // Receive the response from the remote device.
+                    Thread threadServerResponse = new Thread(new ThreadStart(() =>
                     {
-                        //Console.Write("Digite uma mensagem: ");
-                        string consoleInput = Console.ReadLine();
-                        // Encode the data string into a byte array.
-                        byte[] msg = Encoding.UTF8.GetBytes(string.Format("{0}<eol>", consoleInput));
-
-                        // Send the data through the socket.
-                        int bytesSent = sender.Send(msg);
-
-                        // Receive the response from the remote device.
-                        Thread threadServerResponse = new Thread(new ThreadStart(() =>
+                        try
                         {
                             while (true)
                             {
+                                if (!sender.Connected) break;
                                 int bytesRec = sender.Receive(bytes);
                                 Console.Write(Encoding.ASCII.GetString(bytes, 0, bytesRec));
                             }
-                        }));
-                        threadServerResponse.Start();
+                        }
+                        catch (SocketException | ObjectDisposedException e)
+                        {
+                            Console.WriteLine("\nO cliente parou de ouvir o servidor.");
+                        }
+                    }));
+                    threadServerResponse.Start();
+
+                    //Console.Write("Digite um comando para iniciar: ");
+                    while (true)
+                    {
+                        string consoleInput = Console.ReadLine();
+                        // Encode the data string into a byte array.
+                        byte[] msg = Encoding.UTF8.GetBytes(string.Format("{0}<eol>", consoleInput));
+                                                
+                        // Send the data through the socket.
+                        int bytesSent = sender.Send(msg);
 
                         if (consoleInput.ToLower().IndexOf("exit") > -1)
                         {
@@ -67,6 +73,7 @@ namespace Client
 
                         
                     }
+
 
                     // Release the socket.
                     sender.Shutdown(SocketShutdown.Both);

@@ -78,9 +78,15 @@ namespace ProcessSocket
 
                         string msg = new string(buffer, 0, totalRead);
 
-                        Console.Write(msg);
-                        byte[] msgToBeSent = Encoding.ASCII.GetBytes(msg);
-                        handler.Send(msgToBeSent);
+                        if (msg.ToLower().IndexOf("exit") == -1)
+                        {
+                            Console.Write(msg);
+
+                            if (msg.Replace("\n", "").Equals(data)) msg = "";
+                            byte[] msgToBeSent = Encoding.ASCII.GetBytes(msg);
+                            handler.Send(msgToBeSent);
+                        }
+                        else break;
 
                         Thread.Sleep(100);
                     }
@@ -88,17 +94,17 @@ namespace ProcessSocket
 
                 thrRead.Start();
                 //=====================================================================
-                
+
+                data = null;
                 while (true)
                 {
-                    data = null;
 
                     // An incoming connection needs to be processed.
                     while (true)
                     {
                         bytes = new byte[1024];
                         int bytesRec = handler.Receive(bytes);
-                        data += Encoding.UTF8.GetString(bytes, 0, bytesRec);
+                        data = Encoding.UTF8.GetString(bytes, 0, bytesRec);
                         if (data.ToLower().IndexOf("<eol>") > -1)
                         {
                             data = data.Replace("<eol>", "");
