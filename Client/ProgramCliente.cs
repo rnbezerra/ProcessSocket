@@ -47,7 +47,7 @@ namespace Client
                                 Console.Write(Encoding.ASCII.GetString(bytes, 0, bytesRec));
                             }
                         }
-                        catch (SocketException | ObjectDisposedException e)
+                        catch (Exception e)
                         {
                             Console.WriteLine("\nO cliente parou de ouvir o servidor.");
                         }
